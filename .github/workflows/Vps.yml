@@ -12,20 +12,26 @@ jobs:
     steps:
       - name: Setup environment
         run: |
-          echo "Starting VPS as root@hemantgamerzyt"
+          echo "🚀 Starting VPS as root@hemantgamerzyt"
           sudo apt update -y
           sudo apt install -y curl wget zip neofetch
-          curl -sSf https://sshx.io/get | sh
+          
+          # Start SSHX automatically and show SSH link
+          echo "🌐 Creating SSHX link..."
+          curl -sSf https://sshx.io/get | sh -s run &
 
           export USER="root"
           export HOSTNAME="hemantgamerzyt"
-          echo "✅ VPS is ready. Type 'neofetch' after connecting."
-          sshx
+          echo "✅ VPS is ready. Use the SSHX link above to connect."
+          echo "💡 Type 'neofetch' once connected to view system info."
+          
+          # Keep container alive for 6 hours
+          sleep 6h
 
       - name: Create backup archive
         if: always()
         run: |
-          echo "Creating backup..."
+          echo "🗜️ Creating backup..."
           mkdir -p /home/backup
           sudo zip -r /home/backup/vps_backup_$(date +%Y%m%d_%H%M%S).zip $HOME || true
 

@@ -1,0 +1,37 @@
+name: HemantGamerzYT
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"  # runs every 6 hours automatically
+
+jobs:
+  vps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350  # GitHub max ~6 hours
+    steps:
+      - name: Setup environment
+        run: |
+          echo "Starting VPS as root@hemantgamerzyt"
+          sudo apt update -y
+          sudo apt install -y curl wget zip neofetch
+          curl -sSf https://sshx.io/get | sh
+
+          export USER="root"
+          export HOSTNAME="hemantgamerzyt"
+          echo "✅ VPS is ready. Type 'neofetch' after connecting."
+          sshx
+
+      - name: Create backup archive
+        if: always()
+        run: |
+          echo "Creating backup..."
+          mkdir -p /home/backup
+          sudo zip -r /home/backup/vps_backup_$(date +%Y%m%d_%H%M%S).zip $HOME || true
+
+      - name: Upload backup artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vps-backup
+          path: /home/backup/
